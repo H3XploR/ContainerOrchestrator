@@ -1,5 +1,6 @@
 FROM debian:bullseye
-RUN apt update 
+RUN apt update -y
+RUN apt upgrade -y
 RUN apt install nginx -y
 RUN apt install vim -y
 RUN apt install curl -y
@@ -10,4 +11,4 @@ RUN openssl req -x509 -nodes -out /etc/nginx/ssl/inception.crt -keyout /etc/ngin
 COPY conf/nginx.conf /etc/nginx/nginx.conf
 RUN chmod 755 /var/www/html
 RUN chown -R www-data:www-data /var/www/html
-CMD [ "nginx", "-g", "daemon off;" ]
+ENTRYPOINT [ "nginx", "-g", "daemon off;" ]
