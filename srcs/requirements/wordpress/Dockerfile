@@ -17,4 +17,3 @@ COPY ./conf/auto_config.sh /auto_config.sh
 RUN chmod +x /auto_config.sh
 RUN mkdir -p /run/php
 ENTRYPOINT ["sh", "/auto_config.sh"]
-CMD ["/usr/sbin/php-fpm7.3", "-F"]
