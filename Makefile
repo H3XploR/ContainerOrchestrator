@@ -13,7 +13,6 @@ up:
 
 fclean:
 	sudo docker-compose -f srcs/docker-compose.yml down --rmi all --volumes
-	sudo docker rmi debian:bullseye
 	sudo rm -rf /home/null/data
 
 .PHONY: all up fclean
