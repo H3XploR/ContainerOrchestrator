@@ -39,7 +39,9 @@
 !_TAG_ROLE_DESCRIPTION!Sh!heredoc	endmarker	/end marker/
 !_TAG_ROLE_DESCRIPTION!Sh!script	loaded	/loaded/
 !_TAG_ROLE_DESCRIPTION!Yaml!anchor	alias	/alias/
+all	Makefile	/^all:$/;"	t
 clear_env	srcs/requirements/wordpress/conf/www.conf	/^clear_env = no$/;"	k	section:www
+fclean	Makefile	/^fclean:$/;"	t
 group	srcs/requirements/wordpress/conf/www.conf	/^group = www-data$/;"	k	section:www
 listen	srcs/requirements/wordpress/conf/www.conf	/^listen = 0.0.0.0:9000$/;"	k	section:www
 max_children	srcs/requirements/wordpress/conf/www.conf	/^pm.max_children = 5$/;"	k	section:www
@@ -47,5 +49,6 @@ max_spare_servers	srcs/requirements/wordpress/conf/www.conf	/^pm.max_spare_serve
 min_spare_servers	srcs/requirements/wordpress/conf/www.conf	/^pm.min_spare_servers = 1$/;"	k	section:www
 pm	srcs/requirements/wordpress/conf/www.conf	/^pm = dynamic$/;"	k	section:www
 start_servers	srcs/requirements/wordpress/conf/www.conf	/^pm.start_servers = 2$/;"	k	section:www
+up	Makefile	/^up:$/;"	t
 user	srcs/requirements/wordpress/conf/www.conf	/^user = www-data$/;"	k	section:www
 www	srcs/requirements/wordpress/conf/www.conf	/^[www]$/;"	s
