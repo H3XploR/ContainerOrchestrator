@@ -11,8 +11,12 @@ all:
 up:
 	sudo docker-compose -f srcs/docker-compose.yml up --build -d
 
+re: fclean all
+
+
 fclean:
 	sudo docker-compose -f srcs/docker-compose.yml down --rmi all --volumes
 	sudo rm -rf /home/yantoine/data
 
-.PHONY: all up fclean
+.PHONY: all up fclean re
+
