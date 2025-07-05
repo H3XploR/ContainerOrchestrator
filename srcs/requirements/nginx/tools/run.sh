@@ -1,25 +1,26 @@
+#!/bin/bash
+
+echo "
 server {
-	#SSL/TLS Configuration
 	listen 443 ssl;
 	listen [::]:443 ssl;
-	ssl_protocols TLSv1.3;
+	#server_name yantoine.42.fr
 	ssl_certificate /etc/nginx/ssl/inception.crt;
-	ssl_certificate_key /etc/nginx/ssl/inception.key;
+	ssl_certificate_key /etc/nginx/ssl/inception.key;" > /etc/nginx/sites-available/default
 
-	#root and index and server_name
+
+echo '
+	ssl_protocols TLSv1.3;
+	index index.php
 	root /var/www/html;
-	server_name yantoine.42.fr;
-	#index;
-	index index.php 
-	
-	# Pour toutes les requetes php
+
 	location ~ [^/]\.php(/|$) {
 		try_files $uri =404;
 		fastcgi_pass wordpress:9000;
-		include snippets/fastcgi-php.conf;
 		include fastcgi_params;
 		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 	}
+} ' >>  /etc/nginx/sites-available/default
 
-    }
-}
+
+nginx -g "daemon off;"
