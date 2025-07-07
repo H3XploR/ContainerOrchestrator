@@ -1,14 +1,21 @@
 FROM debian:bullseye
-RUN apt update -y
-RUN apt upgrade -y
-RUN apt install nginx -y
-RUN apt install openssl -y
-RUN mkdir -p /etc/nginx/ssl
-RUN mkdir -p /var/run/nginx
-RUN openssl req -x509 -nodes -out /etc/nginx/ssl/inception.crt -keyout /etc/nginx/ssl/inception.key -subj "/C=FR/ST=IDF/L=Paris/O=42/OU=42/CN=yantoine.42.fr/UID=yantoine"
-COPY conf/nginx.conf /etc/nginx/nginx.conf
-RUN chmod 755 /var/www/html
-RUN chown -R www-data:www-data /var/www/html
-COPY ./tools/run.sh /run.sh
-RUN chmod +x /run.sh
-ENTRYPOINT ["/run.sh"]
+
+RUN apt-get update -y && \
+    apt-get upgrade -y && \
+    apt-get install -y nginx openssl && \
+    mkdir -p /etc/nginx/ssl /var/run/nginx && \
+    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+    -keyout /etc/ssl/private/server_pkey.pem \
+    -out /etc/nginx/ssl/server.crt \
+    -subj "/C=FR/ST=IDF/L=Paris/O=42/OU=42/CN=yantoine.42.fr/UID=yantoine"
+
+COPY conf/nginx.conf /etc/nginx/sites-available/nginx.conf
+
+# Suppression du site par défaut et activation de la nouvelle configuration
+RUN rm /etc/nginx/sites-enabled/default && \
+    ln -s /etc/nginx/sites-available/nginx.conf /etc/nginx/sites-enabled/
+
+EXPOSE 443
+
+ENTRYPOINT ["/usr/sbin/nginx", "-g", "daemon off;"]
+
