@@ -1,14 +1,32 @@
 FROM debian:bullseye
 
-ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt update && \
-	apt-get install -y php-fpm php-mysql curl && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update -y && \
+    apt-get upgrade -y && \
+	apt-get install -y php7.4 php-fpm php-cli php-mysql mariadb-client curl
 
-COPY ./tools/run.sh /run.sh
+RUN mkdir /run/php
 
-RUN chmod +x /run.sh
+RUN mkdir -p /var/www/html/
 
-ENTRYPOINT [ "/run.sh" ]
+RUN chown -R www-data:www-data /var/www/html
+
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+
+RUN chmod +x wp-cli.phar
+
+RUN mv wp-cli.phar /usr/local/bin/wp
+
+COPY www.conf /etc/php/7.4/fpm/pool.d/www.conf
+
+COPY tools/wordpress.sh /wordpress.sh
+
+RUN chmod +x /wordpress.sh
+
+EXPOSE 9000
+
+WORKDIR /var/www/html
+
+ENTRYPOINT ["/bin/bash", "/wordpress.sh"]
+
+CMD ["/usr/sbin/php-fpm7.4", "-F"]
