@@ -1,12 +1,13 @@
-FROM alpine:3.19
+FROM alpine:3.20
 
-RUN apk add --no-cache nginx openssl
+RUN apk update && apk add --no-cache nginx openssl bash
 
+# Copie des fichiers de configuration
+COPY conf/nginx.conf /etc/nginx/nginx.conf
 COPY conf/default.conf /etc/nginx/http.d/default.conf
-COPY tools/generate_ssl.sh /tmp/generate_ssl.sh
-
-RUN chmod +x /tmp/generate_ssl.sh && /tmp/generate_ssl.sh
+COPY tools/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 EXPOSE 443
 
-CMD ["nginx", "-g", "daemon off;"]
+ENTRYPOINT ["/entrypoint.sh"]

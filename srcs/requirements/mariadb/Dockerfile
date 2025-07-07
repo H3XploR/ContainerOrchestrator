@@ -1,16 +1,12 @@
-FROM debian:12.5-slim
+FROM alpine:3.20
 
-RUN apt-get update && \
-    apt-get install -y mariadb-server && \
-    rm -rf /var/lib/apt/lists/*
+RUN apk update && \
+    apk add --no-cache mariadb mariadb-client bash && \
+    mkdir -p /run/mysqld && chown -R mysql:mysql /run/mysqld /var/lib/mysql
+
+# Copie du script d'initialisation
+COPY tools/init-db.sh /docker-entrypoint-initdb.d/init-db.sh
+RUN chmod +x /docker-entrypoint-initdb.d/init-db.sh
 
 EXPOSE 3306
-
-COPY conf/my.cnf /etc/mysql/my.cnf
-COPY init.sh /docker-entrypoint-initdb.d/init.sh
-COPY entrypoint.sh /entrypoint.sh
-
-RUN chmod +x /entrypoint.sh /docker-entrypoint-initdb.d/init.sh
-
-ENTRYPOINT ["/entrypoint.sh"]
-
+CMD ["mysqld"]
