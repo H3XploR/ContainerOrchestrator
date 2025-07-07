@@ -7,7 +7,6 @@ services:
     restart: always
     volumes:
       - mariadb_data:/var/lib/mysql
-      - ./tools/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     environment:
       MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
     secrets:
