@@ -1,17 +1,11 @@
-FROM debian:bullseye
-RUN apt-get update -y && \
-    apt-get upgrade -y && \
+FROM debian:12.5-slim
+
+RUN apt-get update && \
     apt-get install -y mariadb-server && \
-    mkdir -p /var/run/mysqld && \
-    chown -R mysql:mysql /var/lib/mysql /var/run/mysqld
-COPY conf/50-server.cnf	/etc/mysql/mariadb.conf.d/50-server.cnf
-RUN mkdir -p /var/run/mysqld
-RUN chown -R mysql:mysql /var/lib/mysql /var/run/mysqld
-COPY ./tools/mariadb.sh /mariadb.sh
+    rm -rf /var/lib/apt/lists/*
 
-RUN chmod +x /mariadb.sh
-
+COPY conf/my.cnf /etc/mysql/my.cnf
+COPY init.sql /docker-entrypoint-initdb.d/
 EXPOSE 3306
-RUN ./mariadb.sh
 
-ENTRYPOINT ["/usr/sbin/mysqld"]
+CMD ["mysqld_safe"]

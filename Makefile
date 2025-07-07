@@ -1,22 +1,29 @@
-#LISTE DE CHOSE A FAIRE POUR LES PC DE 42
-#CHANGER LE PATH en login dans le makefile, dockerfile et docker-compose file
+PROJECT_NAME=inception
+DOCKER_COMPOSE=docker-compose
+DC_FILE=srcs/docker-compose.yml
+ENV_FILE=srcs/.env
 
-all:
-	sudo mkdir -p /home/yantoine/data/wordpress
-	sudo mkdir -p /home/yantoine/data/mariadb
-	sudo chmod 777 /etc/hosts
-	echo "127.0.0.1 yantoine.42.fr" >> /etc/hosts
-	sudo docker-compose -f srcs/docker-compose.yml up --build -d
+all: up
 
 up:
-	sudo docker-compose -f srcs/docker-compose.yml up --build -d
+	@mkdir -p /home/yantoine/data/mariadb
+	@mkdir -p /home/yantoine/data/wordpress
+	@$(DOCKER_COMPOSE) -f $(DC_FILE) --env-file $(ENV_FILE) up -d --build
 
-re: fclean all
+down:
+	@$(DOCKER_COMPOSE) -f $(DC_FILE) --env-file $(ENV_FILE) down
 
+clean:
+	# Arrête et supprime containers + volumes liés au projet
+	@$(DOCKER_COMPOSE) -f $(DC_FILE) --env-file $(ENV_FILE) down -v --remove-orphans
 
-fclean:
-	sudo docker-compose -f srcs/docker-compose.yml down --rmi all --volumes
-	sudo rm -rf /home/yantoine/data
+fclean: clean
+	# Supprime images du projet + system prune + supprime données sur l'hôte
+	@docker image rm -f $(PROJECT_NAME)_wordpress $(PROJECT_NAME)_mariadb $(PROJECT_NAME)_nginx || true
+	@docker system prune -af
+	@rm -rf /home/yantoine/data/mariadb
+	@rm -rf /home/yantoine/data/wordpress
 
-.PHONY: all up fclean re
+re: fclean up
 
+.PHONY: all up down clean fclean re
