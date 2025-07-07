@@ -4,8 +4,9 @@ RUN apt-get update && \
     apt-get install -y mariadb-server && \
     rm -rf /var/lib/apt/lists/*
 
-COPY conf/my.cnf /etc/mysql/my.cnf
-COPY init.sql /docker-entrypoint-initdb.d/
 EXPOSE 3306
+COPY conf/my.cnf /etc/mysql/my.cnf
+COPY init.sh /docker-entrypoint-initdb.d/init.sh
+RUN chmod +x /docker-entrypoint-initdb.d/init.sh
 
 CMD ["mysqld_safe"]
