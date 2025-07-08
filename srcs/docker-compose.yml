@@ -33,6 +33,8 @@ services:
       - wordpress
     networks:
       - inception
+    volumes:
+      - wp:/var/www/html
 
 volumes:
   db:

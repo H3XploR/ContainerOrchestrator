@@ -8,4 +8,9 @@ down:
 
 re: down all
 
-.PHONY: all down re
+prune:
+	docker system prune -a --volumes
+	rm -rf /home/yantoine/data/db
+	rm -rf /home/yantoine/data/wp
+
+.PHONY: all down re prune
