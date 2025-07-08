@@ -1,21 +1,20 @@
-#!/bin/sh
+#!/bin/bash
 
-# Initialisation de la base de données si elle n'existe pas
-if [ ! -d "/var/lib/mysql/mysql" ]; then
-  echo "Initialisation de la base de données..."
+chown -R mysql: /var/lib/mysql
+chmod 777 /var/lib/mysql
 
-  mysqld --user=mysql --bootstrap << EOF
-FLUSH PRIVILEGES;
-ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';
-CREATE DATABASE IF NOT EXISTS ${MYSQL_DATABASE};
-CREATE USER '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';
-GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';
-FLUSH PRIVILEGES;
-EOF
-
+if [ ! -d "/var/lib/mysql/$MYSQL_DATABASE" ]; then
+  rm -f /db1.sql
+  echo "CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE ;" > /db1.sql
+  echo "CREATE USER IF NOT EXISTS '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASSWORD' ;" >> /db1.sql
+  echo "GRANT ALL PRIVILEGES ON $MYSQL_DATABASE.* TO '$MYSQL_USER'@'%' WITH GRANT OPTION;" >> /db1.sql
+  echo "GRANT ALL PRIVILEGES ON $MYSQL_DATABASE.* TO '$MYSQL_USER'@'localhost' WITH GRANT OPTION;" >> /db1.sql
+  echo "FLUSH PRIVILEGES;" >> /db1.sql
+  echo "DROP USER 'root'@'localhost';" >> /db1.sql
+  echo "CREATE USER 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD';" >> /db1.sql
+  echo "GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;" >> /db1.sql
+  echo "FLUSH PRIVILEGES;" >> /db1.sql
+  mariadbd-safe --init-file=/db1.sql  > /dev/null 2>&1
 else
-  echo "Base de données déjà initialisée."
+  mariadbd-safe >/dev/null 2>&1
 fi
-
-exec mysqld_safe --user=mysql
-
