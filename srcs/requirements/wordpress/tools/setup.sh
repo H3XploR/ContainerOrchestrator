@@ -35,6 +35,14 @@ wp core install --path=/var/www/html \
     --skip-email \
     --allow-root
 
+# Créer un utilisateur WordPress normal
+wp user create "$NORMAL_USER" "$NORMAL_MAIL" \
+    --user_pass="$NORMAL_PASSWORD" \
+    --role=subscriber \
+    --path=/var/www/html \
+    --allow-root
+
+
 chown -R www-data:www-data /var/www/html
 
 exec php-fpm8.2 -F
