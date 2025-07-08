@@ -8,7 +8,6 @@ chown -R www-data:www-data /var/www/html
 
 echo "🔍 MYSQL_HOST=$MYSQL_HOST"
 echo "🔍 MYSQL_USER=$MYSQL_USER"
-echo "🔍 MYSQL_PASSWORD=$MYSQL_PASSWORD"
 
 # Attendre que MariaDB soit prêt
 echo "Waiting for MariaDB to be ready..."

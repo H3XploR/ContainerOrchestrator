@@ -1,13 +1,14 @@
 version: '3'
 
+#PService part
 services:
   mariadb:
     build: ./requirements/mariadb
     container_name: mariadb
     restart: always
     volumes:
-      - db:/var/lib/mysql
-    env_file: .env
+      - db:/var/lib/mysql 
+    env_file: .env 
     networks:
       - inception
 
