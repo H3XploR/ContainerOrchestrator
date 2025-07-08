@@ -1,17 +1,22 @@
 FROM debian:12.5-slim
 
-RUN apt-get update && apt-get install -y php-fpm php-mysql curl && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y \
+    php-fpm php-mysql curl mariadb-client less unzip \
+    && rm -rf /var/lib/apt/lists/*
 
 # Force PHP-FPM à écouter sur le port TCP 9000
-RUN sed -i 's/listen = \/run\/php\/php8.2-fpm.sock/listen = 0.0.0.0:9000/' /etc/php/8.2/fpm/pool.d/www.conf
+RUN sed -i 's|listen = /run/php/php8.2-fpm.sock|listen = 0.0.0.0:9000|' /etc/php/8.2/fpm/pool.d/www.conf
 
-# Créer le dossier AVANT de lancer le script
+# Installer WP-CLI
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+    chmod +x wp-cli.phar && mv wp-cli.phar /usr/local/bin/wp
+
 RUN mkdir -p /var/www/html
 
 COPY tools/setup.sh /setup.sh
-RUN chmod +x /setup.sh && /setup.sh
+RUN chmod +x /setup.sh
 
 EXPOSE 9000
 
-CMD ["php-fpm8.2", "-F"]
+CMD ["/setup.sh"]
 
