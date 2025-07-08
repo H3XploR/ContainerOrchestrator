@@ -1,15 +1,11 @@
-NAME=inception
-SRC_DIR=srcs
-
-up:
-	docker compose -f $(SRC_DIR)/docker-compose.yml --env-file $(SRC_DIR)/.env up -d --build
+all:
+	mkdir -p /home/yantoine/data/db
+	mkdir -p /home/yantoine/data/wp
+	docker-compose -f srcs/docker-compose.yml up --build -d
 
 down:
-	docker compose -f $(SRC_DIR)/docker-compose.yml down
+	docker-compose -f srcs/docker-compose.yml down
 
-re: down up
+re: down all
 
-fclean: down
-	docker system prune -af
-
-.PHONY: up down re fclean
+.PHONY: all down re

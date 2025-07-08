@@ -1,86 +1,42 @@
-version: "3.8"
+version: '3'
 
 services:
-  nginx:
-    build: ./requirements/nginx
-    container_name: nginx
-    image: nginx
-    depends_on:
-      - wordpress
+  mariadb:
+    build: ./requirements/mariadb
+    container_name: mariadb
+    restart: always
     volumes:
-      - wp_data:/var/www/html
+      - db:/var/lib/mysql
+    env_file: .env
     networks:
       - inception
-    ports:
-      - "443:443"
-    restart: always
-    environment:
-      - DOMAIN_NAME=${DOMAIN_NAME}
-    secrets:
-      - tls_crt
-      - tls_key
 
   wordpress:
     build: ./requirements/wordpress
     container_name: wordpress
-    image: wordpress
+    restart: always
+    volumes:
+      - wp:/var/www/html
+    env_file: .env
     depends_on:
       - mariadb
-    volumes:
-      - wp_data:/var/www/html
     networks:
       - inception
-    restart: always
-    environment:
-      - WORDPRESS_DB_HOST=mariadb:3306
-      - WORDPRESS_DB_NAME=${MYSQL_DATABASE}
-      - WORDPRESS_DB_USER=${MYSQL_USER}
-      - WORDPRESS_DB_PASSWORD_FILE=/run/secrets/db_password
-      - DOMAIN_NAME=${DOMAIN_NAME}
-    secrets:
-      - db_password
 
-  mariadb:
-    build: ./requirements/mariadb
-    container_name: mariadb
-    image: mariadb
-    volumes:
-      - db_data:/var/lib/mysql
+  nginx:
+    build: ./requirements/nginx
+    container_name: nginx
+    restart: always
+    ports:
+      - "443:443"
+    depends_on:
+      - wordpress
     networks:
       - inception
-    restart: always
-    environment:
-      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/db_root_password
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD_FILE=/run/secrets/db_password
-    secrets:
-      - db_root_password
-      - db_password
 
 volumes:
-  db_data:
-    driver: local
-    driver_opts:
-      type: none
-      device: ${HOST_PATH}/db
-      o: bind
-  wp_data:
-    driver: local
-    driver_opts:
-      type: none
-      device: ${HOST_PATH}/wp
-      o: bind
+  db:
+  wp:
 
 networks:
   inception:
-
-secrets:
-  db_password:
-    file: ../secrets/db_password.txt
-  db_root_password:
-    file: ../secrets/db_root_password.txt
-  tls_key:
-    file: ../secrets/tls_key.pem
-  tls_crt:
-    file: ../secrets/tls_crt.pem
