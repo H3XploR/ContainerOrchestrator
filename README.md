@@ -21,3 +21,18 @@ Automatisation : Automatisation du processus de configuration et de démarrage d
 
 
 Ce projet est une excellente introduction à l'orchestration de conteneurs et offre une compréhension pratique de la gestion des environnements de développement avec Docker et Docker Compose.
+
+exemple de .env fonctionnel:
+
+DOMAIN_NAME=user.42.fr
+MYSQL_USER=user
+MYSQL_PASSWORD=kekeforce
+MYSQL_DATABASE=wordpress
+MYSQL_ROOT_PASSWORD=kakiforce
+ADMIN_USER=superuser
+ADMIN_PASSWORD=lelaisserpasser
+ADMIN_MAIL=superuser@mail.com
+MYSQL_HOST=mariadb
+NORMAL_USER=jean
+NORMAL_PASSWORD=1234
+NORMAL_MAIL=jean@example.com
